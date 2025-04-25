@@ -10,6 +10,12 @@ resource "aws_sns_topic" "notify_finance" {
   name = "invoice-upload-topic"
 }
 
+resource "aws_sns_topic_subscription" "email_subscription" {
+  topic_arn = aws_sns_topic.notify_finance.arn
+  protocol  = "email"
+  endpoint  = "your-email@example.com"  # Replace with actual email
+}
+
 resource "aws_iam_role" "lambda_exec" {
   name = "lambda_s3_exec_role"
   assume_role_policy = jsonencode({
