@@ -1,0 +1,27 @@
+*.zip
+*.tar.gz
+*.jpg
+*.png
+node_modules/
+__pycache__/
+
+# Terraform-specific
+.terraform/
+*.tfstate
+*.tfstate.backup
+crash.log
+terraform.tfvars
+*.zip
+*.tar.gz
+*.jar
+
+# Python artifacts (if using Python Lambda)
+__pycache__/
+*.pyc
+
+# Node artifacts (if using Node Lambda)
+node_modules/
+
+# General OS files
+.DS_Store
+Thumbs.db

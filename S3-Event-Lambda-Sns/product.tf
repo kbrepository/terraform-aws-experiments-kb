@@ -10,6 +10,12 @@ resource "aws_sns_topic" "notify_finance" {
   name = "invoice-upload-topic"
 }
 
+resource "aws_sns_topic_subscription" "email_subscription" {
+  topic_arn = aws_sns_topic.notify_finance.arn
+  protocol  = "email"
+  endpoint  = "your-email@example.com"  # Replace with actual email
+}
+
 resource "aws_iam_role" "lambda_exec" {
   name = "lambda_s3_exec_role"
   assume_role_policy = jsonencode({
@@ -27,6 +33,26 @@ resource "aws_iam_policy_attachment" "lambda_basic" {
   roles      = [aws_iam_role.lambda_exec.name]
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
+
+resource "aws_iam_policy" "lambda_sns_publish_policy" {
+  name        = "lambda-sns-publish-policy"
+  description = "Allows Lambda to publish messages to the SNS topic"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect   = "Allow",
+      Action   = "sns:Publish",
+      Resource = aws_sns_topic.notify_finance.arn
+    }]
+  })
+}
+
+resource "aws_iam_policy_attachment" "lambda_sns_publish_attach" {
+  name       = "lambda-sns-publish-attachment"
+  roles      = [aws_iam_role.lambda_exec.name]
+  policy_arn = aws_iam_policy.lambda_sns_publish_policy.arn
+}
+
 
 data "archive_file" "lambda" {
   type        = "zip"
